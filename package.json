@@ -27,6 +27,11 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "pixi-live2d-display": "^0.3.1"
+    "@pixi/app": "^5.3.10",
+    "@pixi/core": "^5.3.10",
+    "@pixi/interaction": "^5.3.10",
+    "@pixi/ticker": "^5.3.10",
+    "pixi-live2d-display": "^0.3.1",
+    "pixi.js": "^5.0"
   }
 }

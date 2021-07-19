@@ -31,6 +31,11 @@
     "@pixi/core": "^5.3.10",
     "@pixi/interaction": "^5.3.10",
     "@pixi/ticker": "^5.3.10",
+    "@tensorflow-models/face-landmarks-detection": "^0.0.1",
+    "@tensorflow/tfjs-backend-wasm": "^2.8.5",
+    "@tensorflow/tfjs-backend-webgl": "^2.8.5",
+    "@tensorflow/tfjs-converter": "^2.8.5",
+    "@tensorflow/tfjs-core": "^2.8.5",
     "pixi-live2d-display": "^0.3.1",
     "pixi.js": "^5.0"
   }

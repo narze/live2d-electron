@@ -18,6 +18,8 @@ interface IModelData {
 Live2DModel.registerTicker(PIXI.Ticker)
 
 async function main() {
+  await setupCamera()
+
   const app = new PIXI.Application({
     view: document.getElementById("canvas") as HTMLCanvasElement,
     resizeTo: window,
@@ -67,6 +69,36 @@ function draggable(
   })
   model.on("pointerupoutside", () => (modelData.dragging = false))
   model.on("pointerup", () => (modelData.dragging = false))
+}
+
+const VIDEO_SIZE = 500
+
+async function setupCamera() {
+  const video = document.getElementById("video") as HTMLVideoElement
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      facingMode: "user",
+      // Only setting the video to a specified size in order to accommodate a
+      // point cloud, so on mobile d_evices accept the default size.
+      width: VIDEO_SIZE,
+      height: VIDEO_SIZE,
+    },
+  })
+  video.srcObject = stream
+
+  return new Promise((resolve) => {
+    video.onloadedmetadata = () => {
+      video.play()
+      const videoWidth = video.videoWidth
+      const videoHeight = video.videoHeight
+      video.width = videoWidth
+      video.height = videoHeight
+      video.style.visibility = "visible"
+      resolve(video)
+    }
+  })
 }
 
 main()

@@ -37,6 +37,6 @@
     "@tensorflow/tfjs-converter": "^2.8.5",
     "@tensorflow/tfjs-core": "^2.8.5",
     "pixi-live2d-display": "^0.3.1",
-    "pixi.js": "^5.0"
+    "pixi.js": "^6.0"
   }
 }

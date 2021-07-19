@@ -30,7 +30,7 @@
     "@pixi/app": "^5.3.10",
     "@pixi/core": "^5.3.10",
     "@pixi/interaction": "^5.3.10",
-    "@pixi/ticker": "^5.3.10",
+    "@pixi/ticker": "^6.0.4",
     "@tensorflow-models/face-landmarks-detection": "^0.0.1",
     "@tensorflow/tfjs-backend-wasm": "^2.8.5",
     "@tensorflow/tfjs-backend-webgl": "^2.8.5",

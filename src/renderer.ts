@@ -268,7 +268,7 @@ async function main() {
     model.tap(event.clientX, event.clientY)
   })
 
-  await setupPrediction()
+  // await setupPrediction()
 }
 
 function draggable(
@@ -347,6 +347,7 @@ async function setupPrediction() {
   // renderPrediction(model)
   const config = {
     modelBasePath: "./src/models/",
+    backend: "humangl",
   }
   const video = document.querySelector("video") as HTMLVideoElement
 

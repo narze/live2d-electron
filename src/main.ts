@@ -14,7 +14,7 @@ function createWindow() {
     transparent: true,
     frame: false,
     titleBarStyle: "customButtonsOnHover",
-    alwaysOnTop: true,
+    // alwaysOnTop: true,
     hasShadow: false,
   })
 

@@ -35,7 +35,7 @@
     "@tensorflow/tfjs-backend-wasm": "^2.8.5",
     "@tensorflow/tfjs-backend-webgl": "^2.8.5",
     "@tensorflow/tfjs-converter": "^2.8.5",
-    "@tensorflow/tfjs-core": "^2.8.5",
+    "@tensorflow/tfjs-core": "^3.8.0",
     "pixi-live2d-display": "^0.3.1",
     "pixi.js": "^5.0"
   }

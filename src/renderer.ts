@@ -7,12 +7,18 @@
 
 import * as PIXI from "pixi.js"
 import { InternalModel, Live2DModel } from "pixi-live2d-display"
-import "@tensorflow/tfjs-backend-webgl"
-import "@tensorflow/tfjs-backend-cpu"
+// import "@tensorflow/tfjs-backend-webgl"
+// import "@tensorflow/tfjs-backend-cpu"
+// import "@tensorflow/tfjs-node"
+// import tf from "@tensorflow/tfjs"
+// import Human from "@vladmandic/human/dist/human.esm.js" // same functionality as default import, but without tfjs bundled
+// import Human from "../src/human/human.esm.js"
+// import Human from "@vladmandic/human"
 
-import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection"
-import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm"
-import * as tf from "@tensorflow/tfjs-core"
+// import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection"
+import { Result } from "@vladmandic/human"
+// import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm"
+// import * as tf from "@tensorflow/tfjs-core"
 export const TRIANGULATION = [
   127, 34, 139, 11, 0, 37, 232, 231, 120, 72, 37, 39, 128, 121, 47, 232, 121,
   128, 104, 69, 67, 175, 171, 148, 157, 154, 155, 118, 50, 101, 73, 39, 40, 9,
@@ -187,6 +193,8 @@ const GREEN = "#32EEDB"
 const RED = "#FF2C35"
 // const BLUE = "#157AB3"
 const stopRendering = false
+const human = new window.Human()
+
 let ctx: CanvasRenderingContext2D
 let video: HTMLVideoElement
 let videoWidth: number
@@ -311,7 +319,7 @@ async function setupCamera() {
       videoHeight = video.videoHeight
       video.width = videoWidth
       video.height = videoHeight
-      // video.style.visibility = "visible"
+      video.style.visibility = "visible"
 
       canvas = document.getElementById("output") as HTMLCanvasElement
       canvas.width = videoWidth
@@ -332,224 +340,31 @@ async function setupCamera() {
 }
 
 async function setupPrediction() {
-  const model = await faceLandmarksDetection.load(
-    faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
-  )
+  // const model = await faceLandmarksDetection.load(
+  //   faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
+  // )
 
-  renderPrediction(model)
-
-  // // Pass in a video stream (or an image, canvas, or 3D tensor) to obtain an
-  // // array of detected faces from the MediaPipe graph. If passing in a video
-  // // stream, a single prediction per frame will be returned.
-  // const predictions = await model.estimateFaces({
-  //   input: document.querySelector("video"),
-  // })
-
-  // if (predictions.length > 0) {
-  //   /*
-  //   `predictions` is an array of objects describing each detected face, for example:
-
-  //   [
-  //     {
-  //       faceInViewConfidence: 1, // The probability of a face being present.
-  //       boundingBox: { // The bounding box surrounding the face.
-  //         topLeft: [232.28, 145.26],
-  //         bottomRight: [449.75, 308.36],
-  //       },
-  //       mesh: [ // The 3D coordinates of each facial landmark.
-  //         [92.07, 119.49, -17.54],
-  //         [91.97, 102.52, -30.54],
-  //         ...
-  //       ],
-  //       scaledMesh: [ // The 3D coordinates of each facial landmark, normalized.
-  //         [322.32, 297.58, -17.54],
-  //         [322.18, 263.95, -30.54]
-  //       ],
-  //       annotations: { // Semantic groupings of the `scaledMesh` coordinates.
-  //         silhouette: [
-  //           [326.19, 124.72, -3.82],
-  //           [351.06, 126.30, -3.00],
-  //           ...
-  //         ],
-  //         ...
-  //       }
-  //     }
-  //   ]
-  //   */
-
-  //   for (let i = 0; i < predictions.length; i++) {
-  //     const prediction = predictions[i] as any
-  //     const keypoints = prediction.scaledMesh
-
-  //     // Log facial keypoints.
-  //     for (let i = 0; i < keypoints.length; i++) {
-  //       const [x, y, z] = keypoints[i]
-
-  //       console.log(`Keypoint ${i}: [${x}, ${y}, ${z}]`)
-  //     }
-  //   }
-  // }
-}
-
-async function renderPrediction(
-  model: faceLandmarksDetection.FaceLandmarksPackage
-) {
-  if (stopRendering) {
-    return
+  // renderPrediction(model)
+  const config = {
+    modelBasePath: "./src/models/",
   }
+  const video = document.querySelector("video") as HTMLVideoElement
 
-  // stats.begin();
-
-  // const estimateFaces = model.estimateFaces as any
-  const predictions = await model.estimateFaces({
-    input: document.querySelector("video"),
-    returnTensors: false,
-    flipHorizontal: false,
-    // predictIrises: state.predictIrises,
+  human.detect(video, config).then((result: any) => {
+    ctx = canvas.getContext("2d")
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // result object will contain detected details
+    // as well as the processed canvas itself
+    // so lets first draw processed frame on canvas
+    human.draw.canvas(result.canvas, canvas)
+    // then draw results on the same canvas
+    human.draw.face(canvas, result.face)
+    // human.draw.body(canvas, result.body)
+    // human.draw.hand(canvas, result.hand)
+    // human.draw.gesture(canvas, result.gesture)
+    // loop immediate to next frame
+    requestAnimationFrame(setupPrediction)
   })
-
-  ctx.drawImage(
-    video,
-    0,
-    0,
-    videoWidth,
-    videoHeight,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  )
-
-  if (predictions.length > 0) {
-    predictions.forEach((prediction: any) => {
-      const keypoints = prediction.scaledMesh
-
-      if (state.triangulateMesh) {
-        ctx.strokeStyle = GREEN
-        ctx.lineWidth = 0.5
-
-        for (let i = 0; i < TRIANGULATION.length / 3; i++) {
-          const points = [
-            TRIANGULATION[i * 3],
-            TRIANGULATION[i * 3 + 1],
-            TRIANGULATION[i * 3 + 2],
-          ].map((index) => keypoints[index])
-
-          drawPath(ctx, points, true)
-        }
-      } else {
-        ctx.fillStyle = GREEN
-
-        for (let i = 0; i < NUM_KEYPOINTS; i++) {
-          const x = keypoints[i][0]
-          const y = keypoints[i][1]
-
-          ctx.beginPath()
-          ctx.arc(x, y, 1 /* radius */, 0, 2 * Math.PI)
-          ctx.fill()
-        }
-      }
-
-      if (keypoints.length > NUM_KEYPOINTS) {
-        ctx.strokeStyle = RED
-        ctx.lineWidth = 1
-
-        const leftCenter = keypoints[NUM_KEYPOINTS]
-        const leftDiameterY = distance(
-          keypoints[NUM_KEYPOINTS + 4],
-          keypoints[NUM_KEYPOINTS + 2]
-        )
-        const leftDiameterX = distance(
-          keypoints[NUM_KEYPOINTS + 3],
-          keypoints[NUM_KEYPOINTS + 1]
-        )
-
-        ctx.beginPath()
-        ctx.ellipse(
-          leftCenter[0],
-          leftCenter[1],
-          leftDiameterX / 2,
-          leftDiameterY / 2,
-          0,
-          0,
-          2 * Math.PI
-        )
-        ctx.stroke()
-
-        if (keypoints.length > NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS) {
-          const rightCenter = keypoints[NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS]
-          const rightDiameterY = distance(
-            keypoints[NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS + 2],
-            keypoints[NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS + 4]
-          )
-          const rightDiameterX = distance(
-            keypoints[NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS + 3],
-            keypoints[NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS + 1]
-          )
-
-          ctx.beginPath()
-          ctx.ellipse(
-            rightCenter[0],
-            rightCenter[1],
-            rightDiameterX / 2,
-            rightDiameterY / 2,
-            0,
-            0,
-            2 * Math.PI
-          )
-          ctx.stroke()
-        }
-      }
-    })
-
-    // if (renderPointcloud && state.renderPointcloud && scatterGL != null) {
-    //   const pointsData = predictions.map(prediction => {
-    //     let scaledMesh = prediction.scaledMesh;
-    //     return scaledMesh.map(point => ([-point[0], -point[1], -point[2]]));
-    //   });
-
-    //   let flattenedPointsData = [];
-    //   for (let i = 0; i < pointsData.length; i++) {
-    //     flattenedPointsData = flattenedPointsData.concat(pointsData[i]);
-    //   }
-    //   const dataset = new ScatterGL.Dataset(flattenedPointsData);
-
-    //   if (!scatterGLHasInitialized) {
-    //     scatterGL.setPointColorer((i) => {
-    //       if (i % (NUM_KEYPOINTS + NUM_IRIS_KEYPOINTS * 2) > NUM_KEYPOINTS) {
-    //         return RED;
-    //       }
-    //       return BLUE;
-    //     });
-    //     scatterGL.render(dataset);
-    //   } else {
-    //     scatterGL.updateDataset(dataset);
-    //   }
-    //   scatterGLHasInitialized = true;
-    // }
-  }
-
-  // stats.end();
-  // rafID = requestAnimationFrame(renderPrediction);
-  requestAnimationFrame(() => renderPrediction(model))
-}
-
-function distance(a: number[], b: number[]) {
-  return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2))
-}
-
-function drawPath(ctx: any, points: any, closePath: any) {
-  const region = new Path2D()
-  region.moveTo(points[0][0], points[0][1])
-  for (let i = 1; i < points.length; i++) {
-    const point = points[i]
-    region.lineTo(point[0], point[1])
-  }
-
-  if (closePath) {
-    region.closePath()
-  }
-  ctx.stroke(region)
 }
 
 main()

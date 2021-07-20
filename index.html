@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <title>Hello World!</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
+    <!-- <meta
       http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-eval'"
+      content="script-src 'unsafe-eval'"
     />
     <meta
       http-equiv="X-Content-Security-Policy"
-      content="script-src 'self' 'unsafe-eval'"
-    />
+      content="script-src 'unsafe-eval'"
+    /> -->
   </head>
   <body style="overflow: hidden; -webkit-app-region: drag">
     <!-- <h1>Hello</h1>
@@ -20,11 +20,14 @@
     <span id="electron-version"></span>. -->
 
     <div class="canvas-wrapper">
-      <canvas id="output"></canvas>
+      <canvas id="output" style="z-index: 100; position: absolute"></canvas>
       <video
         id="video"
         playsinline
         style="
+          position: absolute;
+          top: 0;
+          left: 0;
           -webkit-transform: scaleX(-1);
           transform: scaleX(-1);
           visibility: hidden;
@@ -37,6 +40,10 @@
     <canvas id="canvas"></canvas>
 
     <!-- You can also require other files to run in this process -->
+    <script src="./dist/human/human.js"></script>
+    <script>
+      window.Human = window.Human.default
+    </script>
     <script src="./src/live2dcubismcore.min.js"></script>
     <script src="./src/live2d.min.js"></script>
     <script src="./dist/renderer.js"></script>

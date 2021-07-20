@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "allowJs": true,
     "paths": {
       "*": ["node_modules/*"]
     }

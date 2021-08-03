@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@pixi/app": "^5.3.10",
-    "@pixi/core": "^5.3.10",
+    "@pixi/core": "^6.0.4",
     "@pixi/interaction": "^5.3.10",
     "@pixi/ticker": "^5.3.10",
     "@tensorflow-models/face-landmarks-detection": "^0.0.1",

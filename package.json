@@ -24,7 +24,7 @@
     "@typescript-eslint/parser": "^4.28.3",
     "electron": "^13.1.7",
     "eslint": "^7.30.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "@pixi/app": "^5.3.10",
